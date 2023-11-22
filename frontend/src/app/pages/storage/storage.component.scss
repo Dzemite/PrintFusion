@@ -1,0 +1,17 @@
+.storages-table {
+  table {
+    border-collapse: separate;
+    
+    .mat-mdc-table-sticky-border-elem-right {
+      border-left: 1px solid #e0e0e0;
+    }
+  
+    .mat-mdc-table-sticky-border-elem-left {
+      border-right: 1px solid #e0e0e0;
+    }
+  
+    th, td {
+      text-wrap: nowrap;
+    }
+  }
+}

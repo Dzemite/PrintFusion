@@ -1,0 +1,34 @@
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  background-color: #1976d2;
+  color: white;
+  font-weight: 600;
+
+  img {
+    margin: 0 16px;
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.content {
+  display: flex;
+  margin: 82px auto 32px;
+  padding: 0 16px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+a {
+  color: white;
+  padding: 1%;
+}

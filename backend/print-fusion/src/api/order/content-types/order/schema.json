@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "itemCount": {
+      "type": "integer",
+      "min": 1,
+      "default": 1,
+      "required": true
+    },
+    "date": {
+      "type": "datetime",
+      "required": true
+    },
+    "dateEnd": {
+      "type": "datetime"
+    },
+    "price": {
+      "type": "decimal",
+      "default": 0,
+      "required": false,
+      "min": 0
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "required": false
+    },
+    "paid": {
+      "type": "boolean",
+      "default": false
+    },
+    "weight": {
+      "type": "decimal",
+      "min": 0,
+      "required": true
+    },
+    "plastic": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::storage.storage"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "modelDesign": {
+      "type": "decimal",
+      "required": false,
+      "min": 0,
+      "default": 0
+    },
+    "relatedExpenses": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0
+    }
+  }
+}

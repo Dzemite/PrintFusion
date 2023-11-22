@@ -1,0 +1,78 @@
+<h1 mat-dialog-title>Хранилище пластика</h1>
+<form [formGroup]="storageForm" (ngSubmit)="data?.edit ? saveStorage() : createStorage()">
+  <div mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Идентификатор</mat-label>
+      <input type="text" matInput formControlName="extId" [errorStateMatcher]="matcher"
+             placeholder="Название или ID катушки">
+      <mat-error *ngIf="storageForm.controls.extId.hasError('required')">
+        Это <strong>обязательное</strong> поле
+      </mat-error>
+    </mat-form-field>
+    <div class="flex gap-2">
+      <mat-form-field class="max-w-xs">
+        <mat-label>Цена за кг.</mat-label>
+        <input type="number" min="0" matInput formControlName="price" placeholder="1000" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="storageForm.controls.extId.hasError('required')">
+          Это <strong>обязательное</strong> поле
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="max-w-xs">
+        <mat-label>Вес (кг)</mat-label>
+        <input type="number" min="0" matInput formControlName="weight" placeholder="10" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="storageForm.controls.extId.hasError('required')">
+          Это <strong>обязательное</strong> поле
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <mat-form-field class="max-w-[12rem]">
+        <mat-label>Брэнд</mat-label>
+        <mat-select formControlName="brand">
+          <mat-option *ngFor="let brand of brands$ | async" [value]="brand.id">
+            {{brand.attributes.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="max-w-[12rem]">
+        <mat-label>Тип</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let type of types$ | async" [value]="type.id">
+            {{type.attributes.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="max-w-[12rem]">
+        <mat-label>Цвет</mat-label>
+        <mat-select formControlName="color">
+          <mat-option *ngFor="let color of colors$ | async" [value]="color.id">
+            {{color.attributes.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button
+      mat-raised-button
+      *ngIf="!data?.edit"
+      [disabled]="!storageForm.valid || !storageForm.touched || !storageForm.dirty"
+      type="submit"
+      color="primary"
+      cdkFocusInitial
+    >
+      Добавить
+    </button>
+    <button
+      mat-raised-button
+      *ngIf="data?.edit"
+      [disabled]="!storageForm.valid || !storageForm.touched || !storageForm.dirty"
+      type="submit"
+      color="primary"
+      cdkFocusInitial
+    >
+      Сохранить
+    </button>
+    <button mat-raised-button color="warn" mat-dialog-close>Отмена</button>
+  </div>
+</form>
