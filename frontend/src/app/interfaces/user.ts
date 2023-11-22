@@ -13,3 +13,9 @@ export interface User {
   createdAt: string,
   updatedAt: string,
 }
+
+export interface RegisterUserData {
+  username: string;
+  email: string;
+  password: string;
+}

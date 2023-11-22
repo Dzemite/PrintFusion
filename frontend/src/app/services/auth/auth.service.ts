@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EnvironmentService } from '../environment/environment.service';
 import { ENV } from 'src/app/interfaces/environment';
-import { AuthUser } from 'src/app/interfaces/user';
+import { AuthUser, RegisterUserData } from 'src/app/interfaces/user';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -23,9 +23,11 @@ export class AuthService {
     return this.http.post<AuthUser>(`${this.apiUrl}/auth/local`, {identifier, password});
   }
 
-  registerUser(inputdata: any) {
-    return this.http.post(this.apiUrl,inputdata)
+  registerUser(inputdata: RegisterUserData) {
+    return this.http.post(`${this.apiUrl}/auth/local/register`, inputdata);
   }
+
+  /** Old functions */
 
   getAll() {
     return this.http.get(this.apiUrl);
