@@ -56,20 +56,18 @@
     <button
       mat-raised-button
       *ngIf="!data?.edit"
-      [disabled]="!storageForm.valid || !storageForm.touched || !storageForm.dirty"
+      [disabled]="!storageForm.valid || !(storageForm.touched || storageForm.dirty)"
       type="submit"
       color="primary"
-      cdkFocusInitial
     >
       Добавить
     </button>
     <button
       mat-raised-button
       *ngIf="data?.edit"
-      [disabled]="!storageForm.valid || !storageForm.touched || !storageForm.dirty"
+      [disabled]="!storageForm.valid || !(storageForm.touched || storageForm.dirty)"
       type="submit"
       color="primary"
-      cdkFocusInitial
     >
       Сохранить
     </button>

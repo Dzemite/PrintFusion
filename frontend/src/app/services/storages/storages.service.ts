@@ -13,6 +13,8 @@ export class StoragesService {
   private apiUrl!: string;
 
   storages$ = new BehaviorSubject<Storage[]>([]);
+  
+  loading$ = new BehaviorSubject<boolean>(true);
 
   constructor(
     private http: HttpClient,
@@ -24,9 +26,15 @@ export class StoragesService {
   }
   
   fetchStorages() {
-    this.getStorages().pipe(take(1), catchError(err => this.toastr.error(err?.error?.error?.message) && of(null))).subscribe(res => {
-      this.storages$.next(res?.data ?? []);
-    });
+    this.loading$.next(true);
+    this.getStorages()
+      .pipe(
+        take(1),
+        catchError(err => this.toastr.error(err?.error?.error?.message) && of(null))
+      ).subscribe(res => {
+        this.loading$.next(false);
+        this.storages$.next(res?.data ?? []);
+      });
   }
 
   getStorages(): Observable<StoragesData> {

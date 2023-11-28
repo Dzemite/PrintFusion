@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr'
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { catchError, of } from 'rxjs';
@@ -22,8 +22,8 @@ export class RegisterComponent {
 
   registerForm = this.builder.group({
     username: this.builder.control('', Validators.required),
-    password: this.builder.control('', Validators.compose([Validators.required])), // Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')
-    email: this.builder.control('', Validators.compose([Validators.required, Validators.email])),
+    password: this.builder.control('', Validators.required), // Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')
+    email: this.builder.control('', [Validators.required, Validators.email]),
   });
 
   proceedRegister() {

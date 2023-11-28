@@ -4,20 +4,21 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RegisterComponent } from './pages/register/register.component';
-import { LoginComponent } from './pages/login/login.component';
-import { HomeComponent } from './pages/home/home.component';
+import { RegisterComponent } from './components/pages/register/register.component';
+import { LoginComponent } from './components/pages/login/login.component';
+import { HomeComponent } from './components/pages/home/home.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from 'src/app/material.module';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
-import { StorageComponent } from './pages/storage/storage.component';
+import { StorageComponent } from './components/pages/storage/storage.component';
 import { ENVIRONMENT } from './services/environment/environment.service';
 import { environment } from 'src/environment/environment';
 import { HttpInterceptorService } from './http-interceptors/http-interceptor.service';
-import { StorageDialogComponent } from './dialogs/storage-dialog/storage-dialog.component';
-import { OrdersComponent } from './pages/orders/orders.component';
-import { OrderDialogComponent } from './dialogs/order-dialog/order-dialog.component';
+import { StorageDialogComponent } from './components/dialogs/storage-dialog/storage-dialog.component';
+import { OrdersComponent } from './components/pages/orders/orders.component';
+import { OrderDialogComponent } from './components/dialogs/order-dialog/order-dialog.component';
+import { LoaderComponent } from './components/common/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { OrderDialogComponent } from './dialogs/order-dialog/order-dialog.compon
     RegisterComponent,
     LoginComponent,
     HomeComponent,
+    LoaderComponent,
     StorageComponent,
     OrdersComponent,
     StorageDialogComponent,

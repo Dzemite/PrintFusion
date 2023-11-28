@@ -68,7 +68,7 @@
     <button
       mat-raised-button
       *ngIf="!data?.edit"
-      [disabled]="!orderForm.valid || !orderForm.touched || !orderForm.dirty"
+      [disabled]="!orderForm.valid || !(orderForm.touched || orderForm.dirty)"
       type="submit"
       color="primary"
     >
@@ -77,11 +77,12 @@
     <button
       mat-raised-button
       *ngIf="data?.edit"
-      [disabled]="!orderForm.valid || !orderForm.touched || !orderForm.dirty"
+      [disabled]="!orderForm.valid || !(orderForm.touched || orderForm.dirty)"
       type="submit"
       color="primary"
     >
       Сохранить
     </button>
+    <button mat-raised-button color="warn" mat-dialog-close>Отмена</button>
   </div>
 </form>

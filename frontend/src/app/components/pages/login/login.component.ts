@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr'
-import { AuthService } from '../../services/auth/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { catchError, of } from 'rxjs';
 import { AuthUser } from 'src/app/interfaces/user';

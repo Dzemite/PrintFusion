@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableDataSourcePaginator } from '@angular/material/table';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of, take } from 'rxjs';
-import { StorageDialogComponent } from 'src/app/dialogs/storage-dialog/storage-dialog.component';
+import { StorageDialogComponent } from 'src/app/components/dialogs/storage-dialog/storage-dialog.component';
 import { Storage, StorageAttributes } from 'src/app/interfaces/storage';
 import { StoragesService } from 'src/app/services/storages/storages.service';
 
@@ -26,11 +26,16 @@ export class StorageComponent {
   private editDialogRef!: MatDialogRef<StorageDialogComponent, { done: boolean }>;
 
   constructor(
-    private storagesService: StoragesService,
+    public storagesService: StoragesService,
     private toastr: ToastrService,
     private dialog: MatDialog,
   ) {
-    this.loadStorages();
+    this.storagesService.storages$.subscribe(storages => {
+      this.storageList = storages;
+      this.dataSource = new MatTableDataSource(this.storageList);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   addStorage() {
@@ -50,19 +55,10 @@ export class StorageComponent {
         )
         .subscribe(res => {
           if (res?.extId) {
-            this.loadStorages();
+            this.storagesService.fetchStorages();
             this.toastr.success('Success');
           }
         });
-    });
-  }
-
-  loadStorages() {
-    this.storagesService.getStorages().subscribe(res => {
-      this.storageList = res.data;
-      this.dataSource = new MatTableDataSource(this.storageList);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
     });
   }
 
@@ -70,7 +66,7 @@ export class StorageComponent {
     this.editDialogRef = this.dialog.open(StorageDialogComponent, { data: { storageData, edit: true }});
     this.editDialogRef.afterClosed().pipe(take(1)).subscribe(res => {
       if (res?.done) {
-        this.loadStorages();
+        this.storagesService.fetchStorages();
       }
     });
   }

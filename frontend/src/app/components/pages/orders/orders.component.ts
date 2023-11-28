@@ -6,10 +6,11 @@ import { MatTableDataSource, MatTableDataSourcePaginator } from '@angular/materi
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of, take } from 'rxjs';
-import { OrderDialogComponent } from 'src/app/dialogs/order-dialog/order-dialog.component';
+import { OrderDialogComponent } from 'src/app/components/dialogs/order-dialog/order-dialog.component';
 import { getDateFormated } from 'src/app/helpers/dates';
 import { Order, OrderAttributes } from 'src/app/interfaces/order';
 import { OrdersService } from 'src/app/services/orders/orders.service';
+import { StoragesService } from 'src/app/services/storages/storages.service';
 
 @Component({
   selector: 'app-orders',
@@ -30,11 +31,17 @@ export class OrdersComponent {
   getDateFormated = getDateFormated;
 
   constructor(
-    private ordersService: OrdersService,
+    public ordersService: OrdersService,
+    public storagesService: StoragesService,
     private toastr: ToastrService,
     private dialog: MatDialog,
   ) {
-    this.loadOrders();
+    this.ordersService.orders$.subscribe(orders => {
+      this.orderList = orders;
+      this.dataSource = new MatTableDataSource(this.orderList);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   addOrder() {
@@ -57,7 +64,8 @@ export class OrdersComponent {
         )
         .subscribe(res => {
           if (res?.name) {
-            this.loadOrders();
+            this.ordersService.fetchOrders();
+            this.storagesService.fetchStorages();
             this.toastr.success('Success');
           }
           if ((res as any)?.name === 'ValidationError') {
@@ -67,20 +75,12 @@ export class OrdersComponent {
     });
   }
 
-  loadOrders() {
-    this.ordersService.getOrders().subscribe(res => {
-      this.orderList = res.data;
-      this.dataSource = new MatTableDataSource(this.orderList);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
-  }
-
   openEditOrderDialog(orderData: Order) {
     this.editDialogRef = this.dialog.open(OrderDialogComponent, { data: { orderData, edit: true }});
     this.editDialogRef.afterClosed().pipe(take(1)).subscribe(res => {
       if (res?.done) {
-        this.loadOrders();
+        this.ordersService.fetchOrders();
+        this.storagesService.fetchStorages();
       }
     });
   }

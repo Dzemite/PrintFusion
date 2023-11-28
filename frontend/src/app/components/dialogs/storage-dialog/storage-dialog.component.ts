@@ -51,6 +51,9 @@ export class StorageDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.storageForm.valueChanges.subscribe((res) => {
+      this.storageForm.markAsDirty();
+    });
   }
 
   createStorage() {

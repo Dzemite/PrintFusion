@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StorageComponent } from './pages/storage/storage.component';
+import { StorageComponent } from './components/pages/storage/storage.component';
 import { AuthGuard } from './guards/auth-guard/auth.guard';
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { OrdersComponent } from './pages/orders/orders.component';
+import { HomeComponent } from './components/pages/home/home.component';
+import { LoginComponent } from './components/pages/login/login.component';
+import { RegisterComponent } from './components/pages/register/register.component';
+import { OrdersComponent } from './components/pages/orders/orders.component';
 
 const routes: Routes = [
  { component: LoginComponent, path: 'login' },

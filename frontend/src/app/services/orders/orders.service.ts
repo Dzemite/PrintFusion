@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EnvironmentService } from '../environment/environment.service';
 import { ENV } from 'src/app/interfaces/environment';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, of, take } from 'rxjs';
 import { Order, OrderAttributes, OrderData, OrdersData } from 'src/app/interfaces/order';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,29 @@ import { Order, OrderAttributes, OrderData, OrdersData } from 'src/app/interface
 export class OrdersService {
   private apiUrl!: string;
 
+  orders$ = new BehaviorSubject<Order[]>([]);  
+
+  loading$ = new BehaviorSubject<boolean>(false);
+
   constructor(
     private http: HttpClient,
+    private toastr: ToastrService,
     private env: EnvironmentService,
   ) {
     this.apiUrl = this.env.getValue(ENV.API_URL);
+    this.fetchOrders();
+  }
+
+  fetchOrders() {
+    this.loading$.next(true);
+    this.getOrders()
+      .pipe(
+        take(1),
+        catchError(err => this.toastr.error(err?.error?.error?.message) && of(null))
+      ).subscribe(res => {
+        this.loading$.next(false);
+        this.orders$.next(res?.data ?? []);
+      });
   }
 
   getOrders(): Observable<OrdersData> {
