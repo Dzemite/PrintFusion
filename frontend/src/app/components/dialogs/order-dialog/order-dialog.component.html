@@ -55,34 +55,37 @@
       <mat-checkbox formControlName="completed">Выполнено</mat-checkbox>
       <mat-checkbox formControlName="paid">Оплачено</mat-checkbox>
     </div>
-
-    <div *ngIf="!data?.edit">
-      <span>Итоговая цена: <b>{{price}}</b> </span>
-    </div>
-    <div *ngIf="data?.edit">
-          <span>цена: <b>{{oldPrice}}</b> </span>
-          <span *ngIf="oldPrice !== price"> &nbsp;<b>-></b>&nbsp; <b>{{price}}</b></span>
-    </div>
   </div>
-  <div mat-dialog-actions>
-    <button
-      mat-raised-button
-      *ngIf="!data?.edit"
-      [disabled]="!orderForm.valid || !(orderForm.touched || orderForm.dirty)"
-      type="submit"
-      color="primary"
-    >
-      Добавить
-    </button>
-    <button
-      mat-raised-button
-      *ngIf="data?.edit"
-      [disabled]="!orderForm.valid || !(orderForm.touched || orderForm.dirty)"
-      type="submit"
-      color="primary"
-    >
-      Сохранить
-    </button>
-    <button mat-raised-button color="warn" mat-dialog-close>Отмена</button>
+  <div mat-dialog-actions class="!justify-between">
+    <div class="flex">
+      <button
+        mat-raised-button
+        *ngIf="!data?.edit"
+        [disabled]="!orderForm.valid || !(orderForm.touched || orderForm.dirty)"
+        type="submit"
+        color="primary"
+      >
+        Добавить
+      </button>
+      <button
+        mat-raised-button
+        *ngIf="data?.edit"
+        [disabled]="!orderForm.valid || !(orderForm.touched || orderForm.dirty)"
+        type="submit"
+        color="primary"
+      >
+        Сохранить
+      </button>
+      <button mat-raised-button color="warn" mat-dialog-close>Отмена</button>
+    </div>
+    <div class="flex">
+      <div *ngIf="!data?.edit">
+        <span>Итоговая цена: <b>{{price}}</b> </span>
+      </div>
+      <div *ngIf="data?.edit">
+            <span>цена: <b>{{oldPrice}}</b> </span>
+            <span *ngIf="oldPrice !== price"> &nbsp;<b>-></b>&nbsp; <b>{{price}}</b></span>
+      </div>
+    </div>
   </div>
 </form>

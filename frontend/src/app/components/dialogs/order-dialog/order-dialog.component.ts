@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, of, take } from 'rxjs';
+import { catchError, of, take, tap } from 'rxjs';
 import { MyErrorStateMatcher } from 'src/app/helpers/error-state-matcher';
 import { OrderAttributes } from 'src/app/interfaces/order';
 import { Storage } from 'src/app/interfaces/storage';
@@ -113,6 +113,11 @@ export class OrderDialogComponent implements OnInit {
     this.ordersService.updateOrder({id: this.data.orderData.id, attributes: formData})
       .pipe(
         take(1),
+        tap((res: any) => {
+          if (res?.message && res?.name === 'ApplicationError') {
+            this.toastr.error(res?.message);
+          }
+        }),
         catchError(err => {
           this.toastr.error(err?.error?.error?.message);
 
@@ -123,7 +128,7 @@ export class OrderDialogComponent implements OnInit {
         if (res?.data?.id) {
           this.toastr.success('Success');
           this.dialogref.close({ done: true });
-        }
+        };
       });
   }
 }

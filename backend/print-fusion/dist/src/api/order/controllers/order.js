@@ -5,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("@strapi/utils");
 const strapi_1 = require("@strapi/strapi");
-const { ValidationError } = utils_1.errors;
+const { ValidationError, ApplicationError } = utils_1.errors;
 // export default factories.createCoreController('api::order.order');
 exports.default = strapi_1.factories.createCoreController('api::order.order', ({ strapi }) => ({
     async create(ctx) {
@@ -64,35 +64,52 @@ exports.default = strapi_1.factories.createCoreController('api::order.order', ({
             const oldOrderWeight = oldItemWeight * oldItemCount;
             const { plastic, itemCount, weight } = order.data;
             const newOrderWeight = weight * (itemCount !== null && itemCount !== void 0 ? itemCount : 1);
-            console.log(`${oldPlastic} === ${plastic}`);
             if (oldPlastic === plastic) {
                 const orderWeightDifference = (newOrderWeight - oldOrderWeight);
-                orderWeightDifference && updatePlasicWeight(orderWeightDifference, plastic);
+                if (orderWeightDifference) {
+                    return updatePlasicWeight(orderWeightDifference, plastic).then(res => {
+                        return super.update(ctx);
+                    }).catch(err => {
+                        return new ApplicationError(err);
+                    });
+                }
+                ;
             }
             else {
-                updatePlasicWeight(newOrderWeight, plastic);
-                // Типа возвращаем пластик обратно в хранилище
-                updatePlasicWeight(-oldOrderWeight, oldPlastic);
+                return updatePlasicWeight(newOrderWeight, plastic).then(res => {
+                    // Возвращаем пластик обратно в хранилище
+                    return updatePlasicWeight(-oldOrderWeight, oldPlastic).then(res => {
+                        return super.update(ctx);
+                    }).catch(err => {
+                        return new ApplicationError(err);
+                    });
+                }).catch(err => {
+                    return new ApplicationError(err);
+                });
             }
         }
         catch (error) {
             console.error(error);
-            return error;
+            return new ApplicationError(error);
         }
-        const response = await super.update(ctx);
-        return response;
     }
 }));
 /**
  * Find and update storage of plastic, decrease weight
  */
 async function updatePlasicWeight(weightDifference, plasticId) {
-    const query = { filters: { id: { '$eq': plasticId } } };
-    const storageForUpdate = await strapi.service('api::storage.storage').find(query);
-    const newWeight = storageForUpdate.results[0].weight - weightDifference;
-    console.log({ weightDifference, newWeight });
-    if (newWeight < 0) {
-        throw new ValidationError('Not enough plastic in stock.', { newWeight });
+    try {
+        const query = { filters: { id: { '$eq': plasticId } } };
+        const storageForUpdate = await strapi.service('api::storage.storage').find(query);
+        const newWeight = storageForUpdate.results[0].weight - weightDifference;
+        if (newWeight < 0) {
+            return Promise.reject('Not enough plastic in stock.');
+        }
+        else {
+            return await strapi.services['api::storage.storage'].update(plasticId, { data: { weight: newWeight } });
+        }
     }
-    await strapi.services['api::storage.storage'].update(plasticId, { data: { weight: newWeight } });
+    catch (error) {
+        return Promise.reject(error);
+    }
 }

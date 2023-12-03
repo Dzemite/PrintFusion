@@ -6,7 +6,7 @@
     "start": "ng serve",
     "start:e2e": "ng e2e --configuration=production",
     "build:dev": "ng build",
-    "build:prod": "ng build --configuration=production",
+    "build:prod": "ng build --configuration=production --aot=true",
     "test": "ng test",
     "json-server": "json-server --watch db.json"
   },
