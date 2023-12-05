@@ -6,6 +6,7 @@ import { HomeComponent } from './components/pages/home/home.component';
 import { LoginComponent } from './components/pages/login/login.component';
 import { RegisterComponent } from './components/pages/register/register.component';
 import { OrdersComponent } from './components/pages/orders/orders.component';
+import { ProfileComponent } from './components/pages/profile/profile.component';
 
 const routes: Routes = [
  { component: LoginComponent, path: 'login' },
@@ -13,6 +14,7 @@ const routes: Routes = [
  { component: HomeComponent, path: '', canActivate:[AuthGuard] },
  { component: StorageComponent, path: 'storages', canActivate:[AuthGuard] },
  { component: OrdersComponent, path: 'orders', canActivate:[AuthGuard] },
+ { component: ProfileComponent, path: 'profile', canActivate:[AuthGuard] },
 ];
 
 @NgModule({

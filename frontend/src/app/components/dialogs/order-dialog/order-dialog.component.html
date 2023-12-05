@@ -20,7 +20,10 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="!min-w-[176px] max-w-[176px]">
-        <mat-label>Вес детали (кг.)</mat-label>
+        <mat-label>Вес детали 
+          <span *ngIf="userSettings?.units === 'kg'"> (кг.) </span>
+          <span *ngIf="userSettings?.units === 'gr'"> (гр.) </span>
+        </mat-label>
         <input type="number" matInput formControlName="weight" [errorStateMatcher]="matcher"
                placeholder="0.5">
         <mat-error *ngIf="orderForm.controls.weight.hasError('required')">
@@ -34,7 +37,10 @@
       <mat-select formControlName="plastic">
         <mat-option class="plastic-option" *ngFor="let storage of storages" [value]="storage.id">
           <div class="w-full flex justify-between">
-            <span>{{storage.attributes.extId}}</span> &nbsp; <span>Остаток: <b>{{storage.attributes.weight}}</b> кг.</span>
+            <span>{{storage.attributes.extId}}</span> &nbsp; <span>Остаток: <b>{{prepareWeightToForm(storage.attributes.weight, userSettings?.units ?? 'kg')}}</b> 
+              <span *ngIf="userSettings?.units === 'kg'"> кг. </span>
+              <span *ngIf="userSettings?.units === 'gr'"> гр. </span>
+            </span>
           </div>
         </mat-option>
       </mat-select>

@@ -3,15 +3,20 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableDataSourcePaginator } from '@angular/material/table';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, of, take } from 'rxjs';
+import { catchError, filter, of, take } from 'rxjs';
 import { OrderDialogComponent } from 'src/app/components/dialogs/order-dialog/order-dialog.component';
 import { getDateFormated } from 'src/app/helpers/dates';
+import { prepareWeightToForm } from 'src/app/helpers/preparations';
 import { Order, OrderAttributes } from 'src/app/interfaces/order';
+import { Settings } from 'src/app/interfaces/user';
 import { OrdersService } from 'src/app/services/orders/orders.service';
 import { StoragesService } from 'src/app/services/storages/storages.service';
+import { UserService } from 'src/app/services/user/user.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
@@ -27,20 +32,32 @@ export class OrdersComponent {
 
   private dialogRef!: MatDialogRef<OrderDialogComponent, OrderAttributes>;
   private editDialogRef!: MatDialogRef<OrderDialogComponent, { done: boolean }>;
+  
+  userSettings!: Settings | null | undefined;
 
   getDateFormated = getDateFormated;
+  prepareWeightToForm = prepareWeightToForm;
 
   constructor(
     public ordersService: OrdersService,
+    private userService: UserService,
     public storagesService: StoragesService,
     private toastr: ToastrService,
     private dialog: MatDialog,
-  ) {
-    this.ordersService.orders$.subscribe(orders => {
-      this.orderList = orders;
-      this.dataSource = new MatTableDataSource(this.orderList);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+  ) {}
+
+  ngOnInit() {
+    this.userService.user$.pipe(
+      untilDestroyed(this),
+      filter(val => Boolean(val))
+    ).subscribe(user => {
+      this.userSettings = user?.settings;
+      this.ordersService.orders$.subscribe(orders => {
+        this.orderList = orders;
+        this.dataSource = new MatTableDataSource(this.orderList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
     });
   }
 

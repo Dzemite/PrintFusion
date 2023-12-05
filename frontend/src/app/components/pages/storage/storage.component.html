@@ -14,13 +14,19 @@
           </ng-container>
       
           <ng-container matColumnDef="price">
-            <th mat-header-cell *matHeaderCellDef> Цена (за кг) </th>
-            <td mat-cell *matCellDef="let element"> {{element?.attributes?.price}} </td>
+            <th mat-header-cell *matHeaderCellDef> Цена
+              <span *ngIf="userSettings?.units === 'kg'">(за кг)</span>
+              <span *ngIf="userSettings?.units === 'gr'">(за гр)</span>
+            </th>
+            <td mat-cell *matCellDef="let element"> {{preparePriceToForm(element?.attributes?.price, userSettings?.units ?? 'kg')}} </td>
           </ng-container>
       
           <ng-container matColumnDef="weight">
-            <th mat-header-cell *matHeaderCellDef> Вес (кг) </th>
-            <td mat-cell *matCellDef="let element"> {{element?.attributes?.weight}} </td>
+            <th mat-header-cell *matHeaderCellDef> Вес
+              <span *ngIf="userSettings?.units === 'kg'">(кг)</span>
+              <span *ngIf="userSettings?.units === 'gr'">(гр)</span>
+            </th>
+            <td mat-cell *matCellDef="let element"> {{prepareWeightToForm(element?.attributes?.weight, userSettings?.units ?? 'kg')}} </td>
           </ng-container>
       
           <ng-container matColumnDef="brand">

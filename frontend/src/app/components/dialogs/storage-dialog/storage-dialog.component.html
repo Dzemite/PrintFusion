@@ -11,14 +11,20 @@
     </mat-form-field>
     <div class="flex gap-2">
       <mat-form-field class="max-w-xs">
-        <mat-label>Цена за кг.</mat-label>
+        <mat-label>Цена за
+          <span *ngIf="userSettings?.units === 'kg'"> кг. </span>
+          <span *ngIf="userSettings?.units === 'gr'">гр.</span>
+        </mat-label>
         <input type="number" min="0" matInput formControlName="price" placeholder="1000" [errorStateMatcher]="matcher">
         <mat-error *ngIf="storageForm.controls.extId.hasError('required')">
           Это <strong>обязательное</strong> поле
         </mat-error>
       </mat-form-field>
       <mat-form-field class="max-w-xs">
-        <mat-label>Вес (кг)</mat-label>
+        <mat-label>Вес
+          <span *ngIf="userSettings?.units === 'kg'">(кг)</span>
+          <span *ngIf="userSettings?.units === 'gr'">(гр)</span>
+        </mat-label>
         <input type="number" min="0" matInput formControlName="weight" placeholder="10" [errorStateMatcher]="matcher">
         <mat-error *ngIf="storageForm.controls.extId.hasError('required')">
           Это <strong>обязательное</strong> поле

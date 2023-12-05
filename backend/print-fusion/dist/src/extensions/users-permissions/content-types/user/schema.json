@@ -66,10 +66,7 @@
             "configurable": false
         },
         "settings": {
-            "type": "component",
-            "repeatable": false,
-            "component": "settings.user-settings",
-            "required": true
+            "type": "json"
         }
     }
 }

@@ -2,18 +2,9 @@
   "collectionName": "components_settings_user_settings",
   "info": {
     "displayName": "user-settings",
-    "icon": "puzzle"
+    "icon": "puzzle",
+    "description": ""
   },
   "options": {},
-  "attributes": {
-    "Units": {
-      "type": "enumeration",
-      "enum": [
-        "кг.",
-        "г."
-      ],
-      "default": "кг.",
-      "required": true
-    }
-  }
+  "attributes": {}
 }

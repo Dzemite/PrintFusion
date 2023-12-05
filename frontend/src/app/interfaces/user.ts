@@ -12,6 +12,11 @@ export interface User {
   blocked: boolean,
   createdAt: string,
   updatedAt: string,
+  settings: Settings | null,
+}
+
+export interface Settings {
+  units: 'kg' | 'gr',
 }
 
 export interface RegisterUserData {

@@ -19,6 +19,7 @@ import { StorageDialogComponent } from './components/dialogs/storage-dialog/stor
 import { OrdersComponent } from './components/pages/orders/orders.component';
 import { OrderDialogComponent } from './components/dialogs/order-dialog/order-dialog.component';
 import { LoaderComponent } from './components/common/loader/loader.component';
+import { ProfileComponent } from './components/pages/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { LoaderComponent } from './components/common/loader/loader.component';
     OrdersComponent,
     StorageDialogComponent,
     OrderDialogComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

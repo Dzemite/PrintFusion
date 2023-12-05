@@ -5,12 +5,9 @@ export interface SettingsUserSettings extends Schema.Component {
   info: {
     displayName: 'user-settings';
     icon: 'puzzle';
+    description: '';
   };
-  attributes: {
-    Units: Attribute.Enumeration<['\u043A\u0433.', '\u0433.']> &
-      Attribute.Required &
-      Attribute.DefaultTo<'\u043A\u0433.'>;
-  };
+  attributes: {};
 }
 
 declare module '@strapi/types' {

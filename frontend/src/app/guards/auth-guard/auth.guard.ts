@@ -15,24 +15,8 @@ export class AuthGuard implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
    
     if (this.service.isLoggedIn()) {
-      if (route.url.length > 0) {
-        let menu = route.url[0].path;
-        if (menu == 'user') {
-          if (this.service.getRole() == 'admin') {
-            return true;
-          } else {
-            this.router.navigate(['']);
-              this.tostr.warning('You dont have access.')
-            return false;
-          }
-        }else{
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
-    else {
+      return true;
+    } else {
       this.router.navigate(['login']);
       return false;
     }
