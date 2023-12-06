@@ -73,6 +73,9 @@ exports.default = strapi_1.factories.createCoreController('api::order.order', ({
                         return new ApplicationError(err);
                     });
                 }
+                else {
+                    return super.update(ctx);
+                }
                 ;
             }
             else {

@@ -80,6 +80,8 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
           }).catch(err => {
             return new ApplicationError(err);
           });
+        } else {
+          return super.update(ctx);
         };
       } else {
         return updatePlasicWeight(newOrderWeight, plastic).then(res => {

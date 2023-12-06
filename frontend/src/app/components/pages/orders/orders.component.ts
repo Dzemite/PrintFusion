@@ -80,7 +80,7 @@ export class OrdersComponent {
           })
         )
         .subscribe(res => {
-          if (res?.name) {
+          if (res?.date) {
             this.ordersService.fetchOrders();
             this.storagesService.fetchStorages();
             this.toastr.success('Success');

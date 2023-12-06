@@ -114,9 +114,11 @@ export class OrderDialogComponent implements OnInit {
   createOrder() {
     if (!this.orderForm.valid) return;
     
+    const orderValue = this.orderForm.getRawValue();
     const formData = {
-      ...this.orderForm.getRawValue(),
+      ...orderValue,
       price: Number(this.price) ?? 0,
+      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg')
     };
     this.dialogref.close(formData);
   }
