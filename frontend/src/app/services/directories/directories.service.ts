@@ -7,6 +7,9 @@ import { Directory } from 'src/app/interfaces/directory';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastrService } from 'ngx-toastr';
 
+/**
+ * Не подходит для справочников с количеством элементов больше 100 так как страпи не выдает больше 100 элементов даже если у неё попросить.
+ */
 @UntilDestroy()
 @Injectable({
   providedIn: 'root'

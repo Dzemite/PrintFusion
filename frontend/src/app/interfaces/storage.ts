@@ -20,6 +20,7 @@ export interface StorageAttributes {
   extId: string;
   price: number;
   weight: number;
+  residueLimit: number;
   brand: DirectoryData,
   color: DirectoryData,
   type: DirectoryData,

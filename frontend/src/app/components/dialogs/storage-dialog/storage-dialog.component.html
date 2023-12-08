@@ -9,8 +9,8 @@
         Это <strong>обязательное</strong> поле
       </mat-error>
     </mat-form-field>
-    <div class="flex gap-2">
-      <mat-form-field class="max-w-xs">
+    <div class="flex flex-wrap gap-2">
+      <mat-form-field class="max-w-[12rem]">
         <mat-label>Цена за
           <span *ngIf="userSettings?.units === 'kg'"> кг. </span>
           <span *ngIf="userSettings?.units === 'gr'">гр.</span>
@@ -20,7 +20,7 @@
           Это <strong>обязательное</strong> поле
         </mat-error>
       </mat-form-field>
-      <mat-form-field class="max-w-xs">
+      <mat-form-field class="max-w-[12rem]">
         <mat-label>Вес
           <span *ngIf="userSettings?.units === 'kg'">(кг)</span>
           <span *ngIf="userSettings?.units === 'gr'">(гр)</span>
@@ -30,16 +30,23 @@
           Это <strong>обязательное</strong> поле
         </mat-error>
       </mat-form-field>
+      <mat-form-field class="max-w-[12rem]">
+        <mat-label>Порог остатка
+          <span *ngIf="userSettings?.units === 'kg'">(кг)</span>
+          <span *ngIf="userSettings?.units === 'gr'">(гр)</span>
+        </mat-label>
+        <input type="number" min="0" matInput formControlName="residueLimit" placeholder="10" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="storageForm.controls.extId.hasError('required')">
+          Это <strong>обязательное</strong> поле
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="flex flex-wrap gap-2">
-      <mat-form-field class="max-w-[12rem]">
-        <mat-label>Брэнд</mat-label>
-        <mat-select formControlName="brand">
-          <mat-option *ngFor="let brand of brands$ | async" [value]="brand.id">
-            {{brand.attributes.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <autocomplete-infinit-scroll
+        class="max-w-[12rem]"
+        [control]="storageForm.controls.brand"
+        [getItems]="getPaginateBrands"
+      ></autocomplete-infinit-scroll>
       <mat-form-field class="max-w-[12rem]">
         <mat-label>Тип</mat-label>
         <mat-select formControlName="type">

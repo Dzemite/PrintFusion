@@ -1,7 +1,6 @@
 cd ../backend/print-fusion
-pm2 delete APP_NAME
-nvm use 20
-NODE_ENV=production pm2 start --name APP_NAME npm -- start
+pm2 delete PrintFusionBackend
+NODE_ENV=production pm2 start --name PrintFusionBackend npm -- start
 cd ../../frontend/dist
 rm -rf /var/www/html
 mkdir /var/www/html

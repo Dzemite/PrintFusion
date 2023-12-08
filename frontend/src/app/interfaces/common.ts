@@ -8,3 +8,9 @@ export interface Pagination {
   pageCount: number;
   total: number;
 }
+
+export interface RequestOptions {
+  filter?: string,
+  pageSize?: number,
+  page?: number,
+}

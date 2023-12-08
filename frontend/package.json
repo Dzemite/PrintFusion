@@ -26,6 +26,7 @@
     "moment": "^2.29.4",
     "ngx-toastr": "^16.0.2",
     "rxjs": "~7.5.0",
+    "rxjs-take-while-inclusive": "^2.1.1",
     "sass": "^1.69.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"

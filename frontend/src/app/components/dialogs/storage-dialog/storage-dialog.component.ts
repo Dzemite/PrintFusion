@@ -1,16 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, filter, of, take } from 'rxjs';
+import { Observable, catchError, filter, map, of, take } from 'rxjs';
 import { MyErrorStateMatcher } from 'src/app/helpers/error-state-matcher';
 import { preparePriceToForm, preparePriceToServer, prepareWeightToForm, prepareWeightToServer } from 'src/app/helpers/preparations';
-import { StorageAttributes } from 'src/app/interfaces/storage';
+import { Storage, StorageAttributes } from 'src/app/interfaces/storage';
 import { Settings } from 'src/app/interfaces/user';
+import { BrandsService } from 'src/app/services/directories/brands/brands.service';
 import { DirectoriesService } from 'src/app/services/directories/directories.service';
 import { StoragesService } from 'src/app/services/storages/storages.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { ILookup } from '../../common/autocomplete-infinit-scroll/autocomplete-infinit-scroll';
 
 @UntilDestroy()
 @Component({
@@ -35,15 +37,32 @@ export class StorageDialogComponent implements OnInit {
     extId: this.builder.control('', Validators.required),
     price: this.builder.control<number | null>(null, Validators.required),
     weight: this.builder.control<number | null>(null, Validators.required),
-    brand: this.builder.control<number | null>(null),
+    residueLimit: this.builder.control(0, Validators.required),
+    brand: new FormControl(),
     color: this.builder.control<number | null>(null),
     type: this.builder.control<number | null>(null),
   });
 
   matcher = new MyErrorStateMatcher();
 
+  getPaginateBrands = ((filter: string, page: number, pageSize: number): Observable<ILookup[]> => {
+    return this.brandsService.getBrands({
+      filter,
+      page,
+      pageSize
+    }).pipe(
+        map(brands => {
+          return brands.data.map(brand => ({
+            id: brand.id,
+            name: brand.attributes.name
+          }));
+        })
+      );
+  }).bind(this);
+
   constructor(
     private directoriesService: DirectoriesService,
+    private brandsService: BrandsService,
     private storagesService: StoragesService,
     private userService: UserService,
     private toastr: ToastrService,
@@ -63,7 +82,11 @@ export class StorageDialogComponent implements OnInit {
           extId: storageAttributes.extId,
           price: this.preparePriceToForm(storageAttributes.price, this.userSettings?.units ?? 'kg'),
           weight: this.prepareWeightToForm(storageAttributes.weight, this.userSettings?.units ?? 'kg'),
-          brand: storageAttributes.brand.data.id,
+          residueLimit: this.prepareWeightToForm(storageAttributes.residueLimit, this.userSettings?.units ?? 'kg'),
+          brand: {
+            id: storageAttributes.brand.data.id,
+            name: storageAttributes.brand.data.attributes.name
+          },
           color: storageAttributes.color.data.id,
           type: storageAttributes.type.data.id,
         });
@@ -81,17 +104,14 @@ export class StorageDialogComponent implements OnInit {
   createStorage() {
     if (!this.storageForm.valid) return;
 
-    const formData = this.storageForm.getRawValue();
-    formData.price = this.preparePriceToServer(formData.price || 0, this.userSettings?.units ?? 'kg');
-    formData.weight = this.prepareWeightToServer(formData.weight || 0, this.userSettings?.units ?? 'kg');
-
+    const formData: StorageAttributes = this.prepareStorageToServer(this.storageForm.getRawValue() as any);
     this.dialogref.close(formData);
   }
 
   saveStorage() {
     if (!this.storageForm.valid) return;
 
-    const formData: StorageAttributes = this.storageForm.getRawValue() as any;
+    const formData: StorageAttributes = this.prepareStorageToServer(this.storageForm.getRawValue() as any);
     this.storagesService.updateStorage({id: this.data.storageData.id, attributes: formData})
       .pipe(
         take(1),
@@ -107,5 +127,14 @@ export class StorageDialogComponent implements OnInit {
           this.dialogref.close({ done: true });
         }
       });
+  }
+
+  private prepareStorageToServer(storage: StorageAttributes) {
+    return {
+      ...storage,
+      price: this.preparePriceToServer(storage.price || 0, this.userSettings?.units ?? 'kg'),
+      weight: this.prepareWeightToServer(storage.weight || 0, this.userSettings?.units ?? 'kg'),
+      residueLimit: this.prepareWeightToServer(storage.residueLimit || 0, this.userSettings?.units ?? 'kg'),
+    };
   }
 }

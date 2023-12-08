@@ -865,6 +865,11 @@ export interface ApiStorageStorage extends Schema.CollectionType {
       'oneToOne',
       'api::color.color'
     >;
+    residueLimit: Attribute.Decimal &
+      Attribute.SetMinMax<{
+        min: 0;
+      }> &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

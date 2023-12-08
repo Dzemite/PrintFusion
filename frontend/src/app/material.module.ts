@@ -11,6 +11,7 @@ import { MatSelectModule } from "@angular/material/select"
 import { MatCheckboxModule } from "@angular/material/checkbox"
 import { MatIconModule } from "@angular/material/icon"
 import { MatMenuModule } from "@angular/material/menu"
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
     exports: [
@@ -24,7 +25,8 @@ import { MatMenuModule } from "@angular/material/menu"
         MatSelectModule,
         MatCheckboxModule,
         MatIconModule,
-        MatMenuModule
+        MatMenuModule,
+        MatAutocompleteModule
     ]
 })
 export class MaterialModule {}

@@ -1,27 +1,8 @@
 import { Component } from '@angular/core';
-import { catchError, of, take } from 'rxjs';
-import { Directory } from 'src/app/interfaces/directory';
+import { FormControl } from '@angular/forms';
+import { Observable, catchError, map, of, take } from 'rxjs';
 import { BrandsService } from 'src/app/services/directories/brands/brands.service';
-import { ColorsService } from 'src/app/services/directories/colors/colors.service';
-import { TypesService } from 'src/app/services/directories/types/types.service';
-
-const types = [
-  'ABS',
-  'ABS+',
-  'ASA',
-  'FLEX',
-  'HIPS',
-  'Nylon',
-  'PCL',
-  'PETG',
-  'PLA',
-  'PLA+',
-  'POM',
-  'PVA',
-  'SBS',
-  'SLA',
-  'TPU',
-];
+import { ILookup } from '../../common/autocomplete-infinit-scroll/autocomplete-infinit-scroll';
 
 @Component({
   selector: 'app-home',
@@ -29,43 +10,176 @@ const types = [
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-
-  constructor(
-    private brandsService: BrandsService,
-    private colorsService: ColorsService,
-    private typesService: TypesService,
-  ) {}
-
-  // createBrand() {
-  //   this.loading = true;
-  //   brands.forEach((brand, index) => {
-  //     setTimeout(() => {
-  //       this.brandsService.createBrand(brand).pipe(
-  //         take(1),
-  //         catchError(err => {
-  //           console.error(err);
-  //           return of(null);
-  //         })
-  //       ).subscribe(res => {
-  //         console.log(`${brand} created, id = ${(res?.data as any).id}`);
-  //       });
-  //     }, 200);
-  //   });
-  // }
-
-  create() {
-    types.forEach((type, index) => {
-      setTimeout(() => {
-        this.typesService.createType(type).pipe(
-          take(1),
-          catchError(err => {
-            console.error(err);
-            return of(null);
-          })
-        ).subscribe(res => {
-          console.log(`${type} created, id = ${(res?.data as any).id}`);
-        });
-      }, 200);
-    });
-  }
+  constructor() {}
 }
+
+
+/** 
+createBrand() {
+  brands.forEach((brand, index) => {
+    setTimeout(() => {
+      this.brandsService.createBrand(brand).pipe(
+        take(1),
+        catchError(err => {
+          console.error(err);
+          return of(null);
+        })
+      ).subscribe(res => {
+        console.log(`${brand} created, id = ${(res?.data as any).id}`);
+      });
+    }, 200);
+  });
+}
+
+const brands = [
+  'Cactus',
+  'NV Print',
+  'Lomond',
+  'Brauberg',
+  '3d-tehno',
+  '3D Студия 1+1',
+  '3D Go!',
+  'ANYCUBIC',
+  '78125',
+  'ABS Maker',
+  'ATECO',
+  'AddTech',
+  'AVUME',
+  'ABS',
+  'Avery Zweckform',
+  'Bestfilament',
+  'Aibecy',
+  'Battery Organizer',
+  'BUDO',
+  'Creality 3D',
+  'Creality',
+  'ChiTu Systems',
+  'CYBERFIBER',
+  'Combuy',
+  'Clotho Filaments',
+  'CLICK',
+  'Creozone',
+  'ESUN',
+  'Dewang',
+  'Elegoo',
+  'ERYONE',
+  'ECC Market',
+  'Element3d',
+  'Ender',
+  'EXOFLEX',
+  'Filamentarno',
+  'E-Sun',
+  'Funtasy',
+  'Funtastique',
+  'FULCRUM',
+  'FunToDo Resins',
+  'Fun To Do',
+  'Flsun',
+  'FD',
+  'Future Make',
+  'FDM Artel',
+  'FL33',
+  'FANCY',
+  'FDplast',
+  'FACTURIKA group',
+  'Facute',
+  'Gorky Liquid',
+  'Geek Fil/lament',
+  'GREG',
+  'Geeetech',
+  'Goodgoods',
+  'GoodStore24',
+  'HARZ Labs',
+  'GALLINA',
+  'Hardlight',
+  'Hi-Tech Plast',
+  'Honya',
+  'Heleos',
+  'Imprinta',
+  'Iris3D',
+  'KREMEN',
+  'Jinlvyi',
+  'KKmoon',
+  'KINGROON',
+  'LIDER-3D Classic',
+  'Kuongshun',
+  'LuxCase',
+  'Lider-3D Premium',
+  'LROB',
+  'LLJUNDUI',
+  'Led Scale',
+  'Luazon',
+  'Longer',
+  'Luazon Home',
+  'MAKO',
+  'my3D',
+  'Mivis',
+  'MyRiwell',
+  'ND Space',
+  'Mfgame',
+  'Novaprint3D',
+  'NONAME',
+  'OnlyPlast3D',
+  'OPY',
+  'Phrozen',
+  'One',
+  'Plastiq',
+  'Print Product',
+  'PetG',
+  'Picaso 3',
+  'Print',
+  'PrintPro',
+  'REC',
+  'Q3T',
+  'Raise3D',
+  'resione',
+  'Robots3D',
+  'Room Copenhagen',
+  'Syntech',
+  'Rec3D',
+  'Sunlu',
+  'STAR PLAST',
+  'SEM',
+  'Spider Box',
+  'Shining 3D',
+  'Solidfilament',
+  'SMOLA',
+  'shop LifeStyle',
+  'STEMDOC',
+  'Studia3D',
+  'Stratasys',
+  'SOLORSN',
+  'Tiger 3d',
+  'SHANTOU BHX TOYS CO',
+  'Techshow',
+  'The 3D Company',
+  'Toyar',
+  'Tronxy',
+  'Tiger3D',
+  'The3D',
+  'TRIDIPRO',
+  'TINGERPLAST',
+  'UNID',
+  'U3Print',
+  'VolPrint',
+  'U3FAN',
+  'Winbo',
+  'VISBELLA',
+  'АБС Мейкер',
+  'YouSu',
+  'Даджет',
+  'АБАКТУМ',
+  'НИТ',
+  'Инженерно-консалтинговый центр',
+  'НовинкиТоп',
+  'НЕКРАСОВСКИЙ',
+  'ПитерКард',
+  'ОРФЕЙ',
+  'СТРИМПЛАСТ',
+  'РУСХИМ',
+  'Северная торговая гильдия',
+  'Собственное производство',
+  'ТриДЭшники',
+  'Траектория 3D',
+];
+*/

@@ -20,6 +20,8 @@ import { OrdersComponent } from './components/pages/orders/orders.component';
 import { OrderDialogComponent } from './components/dialogs/order-dialog/order-dialog.component';
 import { LoaderComponent } from './components/common/loader/loader.component';
 import { ProfileComponent } from './components/pages/profile/profile.component';
+import { AutocompleteInfinitScrollComponent } from './components/common/autocomplete-infinit-scroll/autocomplete-infinit-scroll';
+import { OptionsScrollDirective } from './components/common/autocomplete-infinit-scroll/directives/options-scroll.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { ProfileComponent } from './components/pages/profile/profile.component';
     StorageDialogComponent,
     OrderDialogComponent,
     ProfileComponent,
+    AutocompleteInfinitScrollComponent,
+    OptionsScrollDirective,
   ],
   imports: [
     BrowserModule,

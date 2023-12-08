@@ -13,7 +13,7 @@
     <div class="flex gap-2">
       <mat-form-field class="!min-w-[272px]">
         <mat-label>Количество деталей (шт.)</mat-label>
-        <input type="number" matInput formControlName="itemCount" [errorStateMatcher]="matcher"
+        <input type="number" min="0" matInput formControlName="itemCount" [errorStateMatcher]="matcher"
                placeholder="10">
         <mat-error *ngIf="orderForm.controls.itemCount.hasError('required')">
           Это <strong>обязательное</strong> поле
@@ -24,7 +24,7 @@
           <span *ngIf="userSettings?.units === 'kg'"> (кг.) </span>
           <span *ngIf="userSettings?.units === 'gr'"> (гр.) </span>
         </mat-label>
-        <input type="number" matInput formControlName="weight" [errorStateMatcher]="matcher"
+        <input type="number" min="0" matInput formControlName="weight" [errorStateMatcher]="matcher"
                placeholder="0.5">
         <mat-error *ngIf="orderForm.controls.weight.hasError('required')">
           Это <strong>обязательное</strong> поле
@@ -35,7 +35,12 @@
     <mat-form-field>
       <mat-label>Пластик</mat-label>
       <mat-select formControlName="plastic">
-        <mat-option class="plastic-option" *ngFor="let storage of storages" [value]="storage.id">
+        <mat-option 
+          class="plastic-option"
+          [ngClass]="(storage.attributes.residueLimit >= storage.attributes.weight) ? '!hidden' : ''"
+          *ngFor="let storage of storages"
+          [value]="storage.id"
+        >
           <div class="w-full flex justify-between">
             <span>{{storage.attributes.extId}}</span> &nbsp; <span>Остаток: <b>{{prepareWeightToForm(storage.attributes.weight, userSettings?.units ?? 'kg')}}</b> 
               <span *ngIf="userSettings?.units === 'kg'"> кг. </span>
@@ -49,11 +54,11 @@
     <div class="flex gap-2">
       <mat-form-field class="!min-w-[272px]">
         <mat-label>Затраты на разработку</mat-label>
-        <input type="number" matInput formControlName="modelDesign" [errorStateMatcher]="matcher" placeholder="1000">
+        <input type="number" min="0" matInput formControlName="modelDesign" [errorStateMatcher]="matcher" placeholder="1000">
       </mat-form-field>
       <mat-form-field class="!min-w-[272px]">
         <mat-label>Сопутствующие расходы</mat-label>
-        <input type="number" matInput formControlName="relatedExpenses" [errorStateMatcher]="matcher" placeholder="1000">
+        <input type="number" min="0" matInput formControlName="relatedExpenses" [errorStateMatcher]="matcher" placeholder="1000">
       </mat-form-field>
     </div>
 

@@ -4,6 +4,8 @@ import { ENV } from 'src/app/interfaces/environment';
 import { EnvironmentService } from '../../environment/environment.service';
 import { HttpClient } from '@angular/common/http';
 import { DirectoriesData } from 'src/app/interfaces/directory';
+import { RequestOptions } from 'src/app/interfaces/common';
+import { prepareRequestOptions } from 'src/app/helpers/requests';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +20,9 @@ export class BrandsService {
     this.apiUrl = this.env.getValue(ENV.API_URL);
   }
 
-  getBrands(): Observable<DirectoriesData> {
-    return this.http.get<DirectoriesData>(`${this.apiUrl}/brands?populate=*&pagination[pageSize]=200`);
+  getBrands(options: RequestOptions = {}): Observable<DirectoriesData> {
+    const preparedOptions = prepareRequestOptions(options);
+    return this.http.get<DirectoriesData>(`${this.apiUrl}/brands?populate=*${preparedOptions ? '&' + preparedOptions : ''}`);
   }
 
   createBrand(name: string): Observable<DirectoriesData> {

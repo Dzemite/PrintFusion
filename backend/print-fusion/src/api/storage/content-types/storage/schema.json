@@ -47,6 +47,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::color.color"
+    },
+    "residueLimit": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0
     }
   }
 }

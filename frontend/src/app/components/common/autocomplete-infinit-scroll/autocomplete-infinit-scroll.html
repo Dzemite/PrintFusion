@@ -1,0 +1,8 @@
+<mat-form-field>
+	<input matInput type="text" placeholder="Pick one" #text aria-label="Number" [formControl]="control" matInput [matAutocomplete]="auto">
+	<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" showPanel="true" (optionsScroll)="onScroll()">
+		<mat-option *ngFor="let option of filteredLookups$ | async" [value]="option">
+			{{option.name}}
+		</mat-option>
+	</mat-autocomplete>
+</mat-form-field>
