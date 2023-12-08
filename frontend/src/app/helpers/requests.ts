@@ -9,7 +9,7 @@ export function prepareRequestOptions(options: RequestOptions): string {
     preparedArr.push(`pagination[page]=${options.page}`);
   }
   if (options.filter) {
-    preparedArr.push(`filters[name][$containsi]=${options.filter}`);
+    preparedArr.push(`filters[${options.filter.name}][$containsi]=${options.filter.value}`);
   }
   if (options.sort?.length) {
     options.sort.forEach((sort, i) => {

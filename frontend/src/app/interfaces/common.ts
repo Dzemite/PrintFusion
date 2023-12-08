@@ -10,7 +10,10 @@ export interface Pagination {
 }
 
 export interface RequestOptions {
-  filter?: string,
+  filter?: {
+    name: string,
+    value: string
+  },
   pageSize?: number,
   page?: number,
   sort?: string[],

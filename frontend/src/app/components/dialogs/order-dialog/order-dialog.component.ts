@@ -59,7 +59,10 @@ export class OrderDialogComponent implements OnInit {
 
   getPaginateStorages = ((filter: string, page: number, pageSize: number): Observable<InfinitAutocompleteItem[]> => {
     return this.storagesService.getStorages({
-      filter,
+      filter: {
+        name: 'extId',
+        value: filter
+      },
       page,
       pageSize,
       sort: ['id']

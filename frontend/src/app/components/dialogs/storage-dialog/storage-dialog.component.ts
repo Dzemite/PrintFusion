@@ -47,7 +47,10 @@ export class StorageDialogComponent implements OnInit {
 
   getPaginateBrands = ((filter: string, page: number, pageSize: number): Observable<InfinitAutocompleteItem[]> => {
     return this.brandsService.getBrands({
-      filter,
+      filter: {
+        name: 'name',
+        value: filter
+      },
       page,
       pageSize
     }).pipe(
