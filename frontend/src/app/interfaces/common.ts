@@ -13,4 +13,12 @@ export interface RequestOptions {
   filter?: string,
   pageSize?: number,
   page?: number,
+  sort?: string[],
+}
+
+export interface InfinitAutocompleteItem {
+  id: number;
+  name: string;
+
+  [key: string]: any;
 }

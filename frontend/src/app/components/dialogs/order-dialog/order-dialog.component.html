@@ -32,7 +32,7 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-label>Пластик</mat-label>
       <mat-select formControlName="plastic">
         <mat-option 
@@ -49,7 +49,19 @@
           </div>
         </mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
+    <autocomplete-infinit-scroll
+      class="max-w-[12rem]"
+      [pageSize]="100"
+      [control]="orderForm.controls.plastic"
+      [getItems]="getPaginateStorages"
+      [hideOptionCondition]="hideOptionCondition"
+      [placeholder]="'Пластик'"
+      [displayWith]="displayWith"
+      optionClasses="plastic-option"
+    >
+      <span additional>Остаток: <b>option.weight</b></span>
+    </autocomplete-infinit-scroll>
 
     <div class="flex gap-2">
       <mat-form-field class="!min-w-[272px]">

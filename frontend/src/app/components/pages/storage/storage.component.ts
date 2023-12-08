@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableDataSourcePaginator } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -49,7 +49,6 @@ export class StorageComponent implements OnInit {
     this.storagesService.storages$.subscribe(storages => {
       this.storageList = storages;
       this.dataSource = new MatTableDataSource(this.storageList);
-      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
@@ -84,6 +83,15 @@ export class StorageComponent implements OnInit {
       if (res?.done) {
         this.storagesService.fetchStorages();
       }
+    });
+  }
+
+  handlePageEvent(event: PageEvent) {
+    console.log(event);
+    this.storagesService.fetchStorages({
+      pageSize: event.pageSize,
+      page: event.pageIndex + 1,
+      sort: ['id']
     });
   }
 }

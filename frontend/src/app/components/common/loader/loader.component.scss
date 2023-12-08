@@ -1,5 +1,9 @@
+:host {
+  @apply absolute w-full h-full;
+}
+
 .loader-wrapper {
-  @apply flex justify-center items-center w-full h-full z-10 absolute top-0 left-0 bg-white opacity-80;
+  @apply flex justify-center items-center w-full h-full z-[110] absolute top-0 left-0 bg-white opacity-80;
 }
 
 .lds-facebook {

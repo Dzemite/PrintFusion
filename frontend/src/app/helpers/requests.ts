@@ -11,6 +11,11 @@ export function prepareRequestOptions(options: RequestOptions): string {
   if (options.filter) {
     preparedArr.push(`filters[name][$containsi]=${options.filter}`);
   }
+  if (options.sort?.length) {
+    options.sort.forEach((sort, i) => {
+      preparedArr.push(`sort[${i}]=${sort}`);
+    });
+  }
 
   return preparedArr.length > 0 ? preparedArr.join('&') : '';
 }

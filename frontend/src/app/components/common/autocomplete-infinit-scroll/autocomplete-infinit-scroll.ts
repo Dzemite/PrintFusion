@@ -3,11 +3,8 @@ import { FormControl } from '@angular/forms';
 import { Observable, of, Subject } from 'rxjs';
 import { startWith, switchMap, tap, debounceTime, filter, scan, exhaustMap } from 'rxjs/operators';
 import { takeWhileInclusive } from 'rxjs-take-while-inclusive';
+import { InfinitAutocompleteItem } from 'src/app/interfaces/common';
 
-export interface ILookup {
-  id: number,
-  name: string
-}
 @Component({
   selector: 'autocomplete-infinit-scroll[control][getItems]',
   templateUrl: 'autocomplete-infinit-scroll.html',
@@ -16,34 +13,18 @@ export interface ILookup {
 export class AutocompleteInfinitScrollComponent implements OnInit {
 
   @Input() control!: FormControl;
-  @Input() getItems!: (filter: string, offset: number, limit: number) => Observable<ILookup[]>;
+  @Input() getItems!: (filter: string, offset: number, limit: number) => Observable<InfinitAutocompleteItem[]>;
+  @Input() hideOptionCondition: (option: InfinitAutocompleteItem) => boolean = () => false;
+  @Input() pageSize = 10;
+  @Input() placeholder = 'Pick one';
+  @Input() optionClasses = '';
+  @Input() displayWith = (item: InfinitAutocompleteItem) =>  item ? item.name : '';
 
-  filteredLookups$!: Observable<ILookup[]>;
-
-  // private lookups: ILookup[] = [];
+  filteredLookups$!: Observable<InfinitAutocompleteItem[]>;
   private nextPage$ = new Subject();
 
-  // Fake backend api
-  // private getProducts(startsWith: string, offset: number, limit = 10): Observable<ILookup[]> {
-  //   console.log(`api call filter: ${startsWith}`);
-
-  //   const skip = offset > 0 ? (offset - 1) * limit : 0;
-
-  //   const filtered = this.lookups
-  //     .filter(option => option.name.toLowerCase().startsWith(startsWith.toLowerCase()))
-
-  //   console.log(`skip: ${skip}, limit: ${limit}`);
-
-  //   return of(filtered.slice(skip, skip + limit));
-  // }
 
   ngOnInit() {
-
-    // Note: Generate some mock data
-    // this.lookups = [{ id: 1994, name: 'ana' }, { id: 1989, name: 'narcis' }]
-    // for (let i = 1; i < 100; i++) {
-    //   this.lookups.push({ id: i, name: 'test' + i })
-    // }
 
     // Note: listen for search text changes
     const filter$ = this.control.valueChanges.pipe(
@@ -66,7 +47,7 @@ export class AutocompleteInfinitScrollComponent implements OnInit {
         return this.nextPage$.pipe(
           startWith(currentPage),
           //Note: Until the backend responds, ignore NextPage requests.
-          exhaustMap(_ => this.getItems(filter as string, currentPage, 10)),
+          exhaustMap(_ => this.getItems(filter as string, currentPage, this.pageSize)),
           tap(() => currentPage++),
           //Note: This is a custom operator because we also need the last emitted value.
           //Note: Stop if there are no more pages, or no results at all for the current search text.
@@ -78,10 +59,6 @@ export class AutocompleteInfinitScrollComponent implements OnInit {
         );
       })); // Note: We let asyncPipe subscribe.
 
-  }
-
-  displayWith(lookup: any) {
-    return lookup ? lookup.name : null;
   }
 
   onScroll() {

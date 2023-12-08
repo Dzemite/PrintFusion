@@ -4,6 +4,8 @@ import { ENV } from 'src/app/interfaces/environment';
 import { EnvironmentService } from '../../environment/environment.service';
 import { HttpClient } from '@angular/common/http';
 import { DirectoriesData } from 'src/app/interfaces/directory';
+import { prepareRequestOptions } from 'src/app/helpers/requests';
+import { RequestOptions } from 'src/app/interfaces/common';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +20,9 @@ export class TypesService {
     this.apiUrl = this.env.getValue(ENV.API_URL);
   }
 
-  getTypes(): Observable<DirectoriesData> {
-    return this.http.get<DirectoriesData>(`${this.apiUrl}/types?populate=*&pagination[pageSize]=200`);
+  getTypes(options: RequestOptions = { pageSize: 100 }): Observable<DirectoriesData> {
+    const preparedOptions = prepareRequestOptions(options);
+    return this.http.get<DirectoriesData>(`${this.apiUrl}/types?populate=*${preparedOptions ? '&' + preparedOptions : ''}`);
   }
 
   createType(name: string): Observable<DirectoriesData> {

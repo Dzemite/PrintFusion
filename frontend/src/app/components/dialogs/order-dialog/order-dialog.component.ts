@@ -3,10 +3,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, filter, of, take, tap } from 'rxjs';
+import { Observable, catchError, filter, map, of, take, tap } from 'rxjs';
 import { MyErrorStateMatcher } from 'src/app/helpers/error-state-matcher';
 import { prepareWeightToForm, prepareWeightToServer } from 'src/app/helpers/preparations';
 import { filterStoragesByResidueLimit } from 'src/app/helpers/storages';
+import { InfinitAutocompleteItem } from 'src/app/interfaces/common';
 import { OrderAttributes } from 'src/app/interfaces/order';
 import { Storage } from 'src/app/interfaces/storage';
 import { Settings } from 'src/app/interfaces/user';
@@ -38,12 +39,13 @@ export class OrderDialogComponent implements OnInit {
   }
 
   userSettings!: Settings | null | undefined;
+  unit = '';
 
   orderForm = this.builder.group({
     name: this.builder.control('', Validators.required),
     itemCount: this.builder.control<number | null>(null, Validators.required),
     weight: this.builder.control<number | null>(null, Validators.required),
-    plastic: this.builder.control<number | null>(null, Validators.required),
+    plastic: this.builder.control<{id: number, name: string} | null>(null, Validators.required),
     modelDesign: this.builder.control<number | null>(null),
     relatedExpenses: this.builder.control<number | null>(null),
  // date: this.builder.control('', Validators.required),
@@ -54,6 +56,31 @@ export class OrderDialogComponent implements OnInit {
   });
 
   matcher = new MyErrorStateMatcher();
+
+  getPaginateStorages = ((filter: string, page: number, pageSize: number): Observable<InfinitAutocompleteItem[]> => {
+    return this.storagesService.getStorages({
+      filter,
+      page,
+      pageSize,
+      sort: ['id']
+    }).pipe(
+        map(storages => {
+          return storages.data.map(storage => ({
+            id: storage.id,
+            name: storage.attributes.extId,
+            weight: prepareWeightToForm(storage.attributes.weight, this.userSettings?.units ?? 'kg'),
+            residueLimit: storage.attributes.residueLimit,
+            additional: [prepareWeightToForm(storage.attributes.weight, this.userSettings?.units ?? 'kg'), this.unit],
+          }));
+        })
+      );
+  }).bind(this);
+
+  displayWith = ((item: InfinitAutocompleteItem) => item['weight'] ? `${item.name} —  Остаток: ${item['weight']} ${this.unit}` : item.name).bind(this);
+
+  hideOptionCondition = (option: InfinitAutocompleteItem) => {
+    return option['residueLimit'] >= option['weight']
+  }
 
   constructor(
     private builder: FormBuilder,
@@ -69,6 +96,11 @@ export class OrderDialogComponent implements OnInit {
       filter(val => Boolean(val))
     ).subscribe(user => {
       this.userSettings = user?.settings;
+      this.unit = this.userSettings?.units === 'kg' ?
+        'кг.' :
+        this.userSettings?.units === 'gr' ?
+          'гр.' :
+          'кг.';
 
       if (this.data?.edit) {
         const orderAttributes: OrderAttributes = data.orderData.attributes;
@@ -77,7 +109,10 @@ export class OrderDialogComponent implements OnInit {
         this.orderForm.patchValue({
           ...orderAttributes,
           weight: this.prepareWeightToForm(orderAttributes.weight, this.userSettings?.units ?? 'kg'),
-          plastic: orderAttributes.plastic.data.id,
+          plastic: {
+            id: orderAttributes.plastic.data.id,
+            name: orderAttributes.plastic.data.attributes.extId
+          },
         });
         this.orderForm.updateValueAndValidity();
       }
@@ -94,7 +129,7 @@ export class OrderDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(({itemCount, weight, plastic, modelDesign, relatedExpenses}) => {
         if (itemCount && weight && plastic && this.storages?.length) {
-          const plasticData = this.storages.find(storage => storage.id === plastic)?.attributes;
+          const plasticData = this.storages.find(storage => storage.id === plastic.id)?.attributes;
           if (!plasticData) {
             this.toastr.info('Cant find plastic in storage.');
             this._price = 0;
@@ -119,7 +154,8 @@ export class OrderDialogComponent implements OnInit {
     const formData = {
       ...orderValue,
       price: Number(this.price) ?? 0,
-      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg')
+      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg'),
+      plastic: orderValue.plastic?.id
     };
     this.dialogref.close(formData);
   }
@@ -133,7 +169,8 @@ export class OrderDialogComponent implements OnInit {
       ...this.data.orderData.attributes,
       ...orderValue,
       price: Number(this.price) || Number(this.oldPrice) || 0,
-      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg')
+      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg'),
+      plastic: orderValue.plastic?.id
     };
     this.ordersService.updateOrder({id: this.data.orderData.id, attributes: formData})
       .pipe(

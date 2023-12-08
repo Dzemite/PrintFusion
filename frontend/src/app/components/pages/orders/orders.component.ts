@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableDataSourcePaginator } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -55,10 +55,26 @@ export class OrdersComponent {
       this.ordersService.orders$.subscribe(orders => {
         this.orderList = orders;
         this.dataSource = new MatTableDataSource(this.orderList);
-        this.dataSource.paginator = this.paginator;
+        // this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
     });
+  }
+
+  handlePageEvent(event: PageEvent) {
+    console.log(event);
+    this.ordersService.fetchOrders({
+      pageSize: event.pageSize,
+      page: event.pageIndex + 1,
+      sort: ['id']
+    });
+    // this.length = e.length;
+    // this.pageSize = e.pageSize;
+    // this.pageIndex = e.pageIndex;
+
+    /*
+    [length]="length" // total items
+    */
   }
 
   addOrder() {

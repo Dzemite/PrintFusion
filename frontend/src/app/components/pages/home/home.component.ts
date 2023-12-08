@@ -1,8 +1,4 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Observable, catchError, map, of, take } from 'rxjs';
-import { BrandsService } from 'src/app/services/directories/brands/brands.service';
-import { ILookup } from '../../common/autocomplete-infinit-scroll/autocomplete-infinit-scroll';
 
 @Component({
   selector: 'app-home',

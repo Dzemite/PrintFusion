@@ -6,13 +6,13 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, catchError, filter, map, of, take } from 'rxjs';
 import { MyErrorStateMatcher } from 'src/app/helpers/error-state-matcher';
 import { preparePriceToForm, preparePriceToServer, prepareWeightToForm, prepareWeightToServer } from 'src/app/helpers/preparations';
-import { Storage, StorageAttributes } from 'src/app/interfaces/storage';
+import { InfinitAutocompleteItem } from 'src/app/interfaces/common';
+import { StorageAttributes } from 'src/app/interfaces/storage';
 import { Settings } from 'src/app/interfaces/user';
 import { BrandsService } from 'src/app/services/directories/brands/brands.service';
 import { DirectoriesService } from 'src/app/services/directories/directories.service';
 import { StoragesService } from 'src/app/services/storages/storages.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { ILookup } from '../../common/autocomplete-infinit-scroll/autocomplete-infinit-scroll';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +45,7 @@ export class StorageDialogComponent implements OnInit {
 
   matcher = new MyErrorStateMatcher();
 
-  getPaginateBrands = ((filter: string, page: number, pageSize: number): Observable<ILookup[]> => {
+  getPaginateBrands = ((filter: string, page: number, pageSize: number): Observable<InfinitAutocompleteItem[]> => {
     return this.brandsService.getBrands({
       filter,
       page,

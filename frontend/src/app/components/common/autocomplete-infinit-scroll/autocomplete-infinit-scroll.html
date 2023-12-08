@@ -1,8 +1,17 @@
 <mat-form-field>
-	<input matInput type="text" placeholder="Pick one" #text aria-label="Number" [formControl]="control" matInput [matAutocomplete]="auto">
+	<input matInput type="text" [placeholder]="placeholder" #text aria-label="Number" [formControl]="control" matInput [matAutocomplete]="auto">
 	<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" showPanel="true" (optionsScroll)="onScroll()">
-		<mat-option *ngFor="let option of filteredLookups$ | async" [value]="option">
-			{{option.name}}
+		<mat-option
+			*ngFor="let option of filteredLookups$ | async"
+			[value]="option"
+			[ngClass]="hideOptionCondition(option) ? '!hidden ' + optionClasses : optionClasses"
+		>
+			<div class="w-full flex justify-between">
+				<span>{{option.name}}</span> &nbsp;
+				<span *ngIf="option['additional']?.length">Остаток:
+					<b>{{option['additional'][0]}}</b> <span> {{option['additional'][1]}} </span>
+				</span>
+			</div>
 		</mat-option>
 	</mat-autocomplete>
 </mat-form-field>
