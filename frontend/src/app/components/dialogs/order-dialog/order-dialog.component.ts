@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ToastrService } from 'ngx-toastr';
@@ -27,6 +27,7 @@ export class OrderDialogComponent implements OnInit {
   prepareWeightToForm = prepareWeightToForm;
 
   storages: Storage[] = [];
+  showPricePerPart = new FormControl(false);
 
   private _oldPrice = 0;
   get oldPrice(): string {
@@ -51,6 +52,7 @@ export class OrderDialogComponent implements OnInit {
  // date: this.builder.control('', Validators.required),
  // dateEnd: this.builder.control(''),
  // price: this.builder.control(''),
+    pricePerPart: this.builder.control<number | null>(null),
     completed: this.builder.control(false),
     paid: this.builder.control(false),
   });
@@ -79,7 +81,10 @@ export class OrderDialogComponent implements OnInit {
       );
   }).bind(this);
 
-  displayWith = ((item: InfinitAutocompleteItem) => item['weight'] ? `${item.name} —  Остаток: ${item['weight']} ${this.unit}` : item.name).bind(this);
+  displayWith = ((item: InfinitAutocompleteItem) => {
+    if (!item) return '';
+    return item['weight'] ? `${item.name} —  Остаток: ${item['weight']} ${this.unit}` : item.name
+  }).bind(this);
 
   hideOptionCondition = (option: InfinitAutocompleteItem) => {
     return option['residueLimit'] >= option['weight']
@@ -117,6 +122,10 @@ export class OrderDialogComponent implements OnInit {
             name: orderAttributes.plastic.data.attributes.extId
           },
         });
+        if (orderAttributes.pricePerPart) {
+          this.showPricePerPart.patchValue(true);
+          this.showPricePerPart.updateValueAndValidity();
+        }
         this.orderForm.updateValueAndValidity();
       }
     });
@@ -130,51 +139,46 @@ export class OrderDialogComponent implements OnInit {
       });
     this.orderForm.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe(({itemCount, weight, plastic, modelDesign, relatedExpenses}) => {
-        if (itemCount && weight && plastic && this.storages?.length) {
-          const plasticData = this.storages.find(storage => storage.id === plastic.id)?.attributes;
-          if (!plasticData) {
-            this.toastr.info('Cant find plastic in storage.');
-            this._price = 0;
-            return;
-          }
-          if (!plasticData?.price) {
-            this.toastr.info('Зlastic has no price per kg.');
-            this._price = 0;
-            return;
-          }
-
-          const preparedWeight = this.prepareWeightToServer(weight, this.userSettings?.units ?? 'kg');
-          this._price = itemCount * ( preparedWeight * plasticData?.price ) + (modelDesign ?? 0) + (relatedExpenses ?? 0);
-        }
+      .subscribe(() => {
+        this.recalculateOrderPrice();
       });
+      this.showPricePerPart.valueChanges.pipe(untilDestroyed(this)).subscribe(value => {
+        if (value) {
+          this.orderForm.controls.pricePerPart.clearValidators();
+          this.orderForm.controls.pricePerPart.addValidators(Validators.required);
+        } else {
+          this.orderForm.controls.pricePerPart.clearValidators();
+        }
+        this.orderForm.controls.pricePerPart.updateValueAndValidity();
+        this.recalculateOrderPrice();
+      });
+  }
+
+  private recalculateOrderPrice() {
+    const {itemCount, weight, plastic, modelDesign, relatedExpenses, pricePerPart} = this.orderForm.getRawValue();
+    if (itemCount && weight && plastic && this.storages?.length) {
+      const plasticData = this.storages.find(storage => storage.id === plastic.id)?.attributes;
+      if (!plasticData) {
+        this.toastr.info('Не получилось найти пластик на складе');
+        this._price = 0;
+        return;
+      }
+      const preparedWeight = this.prepareWeightToServer(weight, this.userSettings?.units ?? 'kg');
+      const _pricePerPart = this.showPricePerPart.value ? pricePerPart : (preparedWeight * plasticData?.price);
+
+      this._price = itemCount * (_pricePerPart || 0) + (modelDesign || 0) + (relatedExpenses || 0);
+    }
   }
 
   createOrder() {
     if (!this.orderForm.valid) return;
-    
-    const orderValue = this.orderForm.getRawValue();
-    const formData = {
-      ...orderValue,
-      price: Number(this.price) ?? 0,
-      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg'),
-      plastic: orderValue.plastic?.id
-    };
+    const formData = this.prepareOrderDataForServer();
     this.dialogref.close(formData);
   }
 
   saveOrder() {
     if (!this.orderForm.valid) return;
-
-    const orderValue = this.orderForm.getRawValue();
-
-    const formData: OrderAttributes = {
-      ...this.data.orderData.attributes,
-      ...orderValue,
-      price: Number(this.price) || Number(this.oldPrice) || 0,
-      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg'),
-      plastic: orderValue.plastic?.id
-    };
+    const formData = this.prepareOrderDataForServer();
     this.ordersService.updateOrder({id: this.data.orderData.id, attributes: formData})
       .pipe(
         take(1),
@@ -195,5 +199,26 @@ export class OrderDialogComponent implements OnInit {
           this.dialogref.close({ done: true });
         };
       });
+  }
+
+  private prepareOrderDataForServer(): OrderAttributes {
+    const orderValue = this.orderForm.getRawValue();
+    const { pricePerPart } = orderValue;
+    let pricePerPartForCreate = null;
+
+    if (this.showPricePerPart.value) {
+      pricePerPartForCreate = pricePerPart;
+    }
+
+    const formData: OrderAttributes = {
+      ...(this.data?.orderData?.attributes || {}),
+      ...orderValue,
+      price: Number(this.price) || Number(this.oldPrice) || 0,
+      pricePerPart: pricePerPartForCreate,
+      weight: this.prepareWeightToServer(Number(orderValue.weight) || 0, this.userSettings?.units ?? 'kg'),
+      plastic: orderValue.plastic?.id
+    };
+
+    return formData;
   }
 }

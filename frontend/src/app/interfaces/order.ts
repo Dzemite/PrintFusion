@@ -22,11 +22,12 @@ export interface OrderAttributes {
   date: string;
   dateEnd?: string;
   price: number;
+  pricePerPart: number | null;
   completed: boolean;
   paid: boolean;
   weight: number;
-  modelDesign: number;
-  relatedExpenses: number;
+  modelDesign: number | null;
+  relatedExpenses: number | null;
   plastic: StorageData;
   createdAt?: string;
   updatedAt?: string;

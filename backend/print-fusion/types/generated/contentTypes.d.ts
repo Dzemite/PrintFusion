@@ -802,6 +802,11 @@ export interface ApiOrderOrder extends Schema.CollectionType {
         min: 0;
       }> &
       Attribute.DefaultTo<0>;
+    pricePerPart: Attribute.Decimal &
+      Attribute.SetMinMax<{
+        min: 0;
+      }> &
+      Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

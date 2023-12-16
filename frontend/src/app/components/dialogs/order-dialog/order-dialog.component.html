@@ -10,16 +10,19 @@
       </mat-error>
     </mat-form-field>
 
-    <div class="flex gap-2">
-      <mat-form-field class="!min-w-[272px]">
+    <div class="flex gap-2 flex-wrap">
+      <mat-form-field class="!min-w-[272px] md:!max-w-[272px]">
         <mat-label>Количество деталей (шт.)</mat-label>
         <input type="number" min="0" matInput formControlName="itemCount" [errorStateMatcher]="matcher"
                placeholder="10">
         <mat-error *ngIf="orderForm.controls.itemCount.hasError('required')">
           Это <strong>обязательное</strong> поле
         </mat-error>
+        <mat-error *ngIf="orderForm.controls.itemCount.hasError('min')">
+          Значение должно быть больше 0
+        </mat-error>
       </mat-form-field>
-      <mat-form-field class="!min-w-[176px] max-w-[176px]">
+      <mat-form-field class="!min-w-[272px] md:!max-w-[272px]">
         <mat-label>Вес детали 
           <span *ngIf="userSettings?.units === 'kg'"> (кг.) </span>
           <span *ngIf="userSettings?.units === 'gr'"> (гр.) </span>
@@ -28,6 +31,9 @@
                placeholder="0.5">
         <mat-error *ngIf="orderForm.controls.weight.hasError('required')">
           Это <strong>обязательное</strong> поле
+        </mat-error>
+        <mat-error *ngIf="orderForm.controls.weight.hasError('min')">
+          Значение должно быть больше 0
         </mat-error>
       </mat-form-field>
     </div>
@@ -51,7 +57,7 @@
       </mat-select>
     </mat-form-field> -->
     <autocomplete-infinit-scroll
-      class="max-w-[12rem]"
+      class="min-w-[12rem] md:max-w-[12rem]"
       [pageSize]="100"
       [control]="orderForm.controls.plastic"
       [getItems]="getPaginateStorages"
@@ -63,14 +69,34 @@
       <span additional>Остаток: <b>option.weight</b></span>
     </autocomplete-infinit-scroll>
 
-    <div class="flex gap-2">
-      <mat-form-field class="!min-w-[272px]">
+    <div class="flex gap-2 flex-wrap">
+      <mat-checkbox class="mb-[22px] !min-w-[272px] md:!max-w-[272px]" [formControl]="showPricePerPart">Указать цену детали вручную</mat-checkbox>
+      <mat-form-field *ngIf="showPricePerPart.value" class="!min-w-[272px] md:!max-w-[272px]">
+        <mat-label>Цена детали</mat-label>
+        <input type="number" min="0" matInput formControlName="pricePerPart" placeholder="50">
+        <mat-error *ngIf="orderForm.controls.name.hasError('required')">
+          Это <strong>обязательное</strong> поле
+        </mat-error>
+        <mat-error *ngIf="orderForm.controls.pricePerPart.hasError('min')">
+          Значение должно быть больше 0
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="flex gap-2 flex-wrap">
+      <mat-form-field class="!min-w-[272px] md:!max-w-[272px]">
         <mat-label>Затраты на разработку</mat-label>
         <input type="number" min="0" matInput formControlName="modelDesign" [errorStateMatcher]="matcher" placeholder="1000">
+        <mat-error *ngIf="orderForm.controls.modelDesign.hasError('min')">
+          Значение должно быть больше 0
+        </mat-error>
       </mat-form-field>
-      <mat-form-field class="!min-w-[272px]">
+      <mat-form-field class="!min-w-[272px] md:!max-w-[272px]">
         <mat-label>Сопутствующие расходы</mat-label>
         <input type="number" min="0" matInput formControlName="relatedExpenses" [errorStateMatcher]="matcher" placeholder="1000">
+        <mat-error *ngIf="orderForm.controls.relatedExpenses.hasError('min')">
+          Значение должно быть больше 0
+        </mat-error>
       </mat-form-field>
     </div>
 
