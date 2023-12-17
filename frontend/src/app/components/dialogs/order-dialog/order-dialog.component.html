@@ -38,24 +38,6 @@
       </mat-form-field>
     </div>
 
-    <!-- <mat-form-field>
-      <mat-label>Пластик</mat-label>
-      <mat-select formControlName="plastic">
-        <mat-option 
-          class="plastic-option"
-          [ngClass]="(storage.attributes.residueLimit >= storage.attributes.weight) ? '!hidden' : ''"
-          *ngFor="let storage of storages"
-          [value]="storage.id"
-        >
-          <div class="w-full flex justify-between">
-            <span>{{storage.attributes.extId}}</span> &nbsp; <span>Остаток: <b>{{prepareWeightToForm(storage.attributes.weight, userSettings?.units ?? 'kg')}}</b> 
-              <span *ngIf="userSettings?.units === 'kg'"> кг. </span>
-              <span *ngIf="userSettings?.units === 'gr'"> гр. </span>
-            </span>
-          </div>
-        </mat-option>
-      </mat-select>
-    </mat-form-field> -->
     <autocomplete-infinit-scroll
       class="min-w-[12rem] md:max-w-[12rem]"
       [pageSize]="100"

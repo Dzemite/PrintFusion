@@ -46,7 +46,7 @@ export class OrderDialogComponent implements OnInit {
     name: this.builder.control('', Validators.required),
     itemCount: this.builder.control<number | null>(null, Validators.required),
     weight: this.builder.control<number | null>(null, Validators.required),
-    plastic: this.builder.control<{id: number, name: string} | null>(null, Validators.required),
+    plastic: this.builder.control<InfinitAutocompleteItem | null>(null, Validators.required),
     modelDesign: this.builder.control<number | null>(null),
     relatedExpenses: this.builder.control<number | null>(null),
  // date: this.builder.control('', Validators.required),
@@ -73,8 +73,9 @@ export class OrderDialogComponent implements OnInit {
           return storages.data.map(storage => ({
             id: storage.id,
             name: storage.attributes.extId,
+            price: storage.attributes.price,
             weight: prepareWeightToForm(storage.attributes.weight, this.userSettings?.units ?? 'kg'),
-            residueLimit: storage.attributes.residueLimit,
+            residueLimit: prepareWeightToForm(storage.attributes.residueLimit, this.userSettings?.units ?? 'kg'),
             additional: [prepareWeightToForm(storage.attributes.weight, this.userSettings?.units ?? 'kg'), this.unit],
           }));
         })
@@ -119,7 +120,8 @@ export class OrderDialogComponent implements OnInit {
           weight: this.prepareWeightToForm(orderAttributes.weight, this.userSettings?.units ?? 'kg'),
           plastic: {
             id: orderAttributes.plastic.data.id,
-            name: orderAttributes.plastic.data.attributes.extId
+            name: orderAttributes.plastic.data.attributes.extId,
+            price: orderAttributes.plastic.data.attributes.price,
           },
         });
         if (orderAttributes.pricePerPart) {
@@ -157,14 +159,8 @@ export class OrderDialogComponent implements OnInit {
   private recalculateOrderPrice() {
     const {itemCount, weight, plastic, modelDesign, relatedExpenses, pricePerPart} = this.orderForm.getRawValue();
     if (itemCount && weight && plastic && this.storages?.length) {
-      const plasticData = this.storages.find(storage => storage.id === plastic.id)?.attributes;
-      if (!plasticData) {
-        this.toastr.info('Не получилось найти пластик на складе');
-        this._price = 0;
-        return;
-      }
       const preparedWeight = this.prepareWeightToServer(weight, this.userSettings?.units ?? 'kg');
-      const _pricePerPart = this.showPricePerPart.value ? pricePerPart : (preparedWeight * plasticData?.price);
+      const _pricePerPart = this.showPricePerPart.value ? pricePerPart : (preparedWeight * (plastic['price'] || 0));
 
       this._price = itemCount * (_pricePerPart || 0) + (modelDesign || 0) + (relatedExpenses || 0);
     }

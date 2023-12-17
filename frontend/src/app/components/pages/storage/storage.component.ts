@@ -87,7 +87,6 @@ export class StorageComponent implements OnInit {
   }
 
   handlePageEvent(event: PageEvent) {
-    console.log(event);
     this.storagesService.fetchStorages({
       pageSize: event.pageSize,
       page: event.pageIndex + 1,
