@@ -14,4 +14,7 @@
 			</div>
 		</mat-option>
 	</mat-autocomplete>
+	<mat-error *ngIf="control.hasError('required')">
+		Это <strong>обязательное</strong> поле
+	</mat-error>
 </mat-form-field>
